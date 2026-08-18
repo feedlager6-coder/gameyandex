@@ -1,0 +1,6 @@
+{
+  "name": "Garden Workshop",
+  "description": "Mobile-first 2D merge puzzle game optimized for Yandex Games with sound effects, orders, and progression.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
