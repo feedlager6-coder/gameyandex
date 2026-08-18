@@ -12,6 +12,7 @@ export type AnalyticsEvent =
 export interface IPlatformAdapter {
   readonly platformName: string;
   init(): Promise<void>;
+  getLanguage(): string;
   loadingReady(): void;
   gameplayStart(): void;
   gameplayStop(): void;

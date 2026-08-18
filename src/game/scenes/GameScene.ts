@@ -261,7 +261,7 @@ export class GameScene extends Phaser.Scene {
 
         container.add(completeBtn);
       } else {
-        const pendingText = this.add.text(cardWidth / 4 - 2, 14, 'В процессе', {
+        const pendingText = this.add.text(cardWidth / 4 - 2, 14, t('order_in_progress'), {
           fontFamily: 'system-ui, sans-serif',
           fontSize: '10px',
           color: '#9e9e9e',
@@ -317,7 +317,7 @@ export class GameScene extends Phaser.Scene {
 
     // Play sounds & animations
     SoundSystem.getInstance().playOrderComplete();
-    ModalManager.showToast(this, `Заказ выполнен! +${order.rewardCoins} монет ✦`, 0x2e7d32);
+    ModalManager.showToast(this, t('order_completed_toast', { coins: order.rewardCoins }), 0x2e7d32);
 
     const platform = getPlatformAdapter();
     platform.sendAnalytics('order_complete', {
@@ -503,7 +503,7 @@ export class GameScene extends Phaser.Scene {
         data.stats.totalMerges += 1;
         if (nextConfig.level > data.unlockedMaxLevel) {
           data.unlockedMaxLevel = nextConfig.level;
-          ModalManager.showToast(this, `Открыт: ${t(nextConfig.nameKey)}! 🌸`, 0x2e7d32);
+          ModalManager.showToast(this, t('new_item_unlocked', { name: t(nextConfig.nameKey) }), 0x2e7d32);
         }
 
         saveManager.saveImmediate(data);
@@ -617,7 +617,7 @@ export class GameScene extends Phaser.Scene {
           data.freeSeedTapsRemaining += 5;
           saveManager.saveImmediate(data);
           this.updateHUD();
-          ModalManager.showToast(this, '+5 бесплатных семян получено! 🌱', 0x2e7d32);
+          ModalManager.showToast(this, t('reward_seeds_toast', { count: 5 }), 0x2e7d32);
         },
         () => {}
       );
@@ -631,7 +631,7 @@ export class GameScene extends Phaser.Scene {
       const seedCost = 3;
       if (data.coins < seedCost) {
         SoundSystem.getInstance().playError();
-        ModalManager.showToast(this, 'Недостаточно монет для семечка!', 0xd84315);
+        ModalManager.showToast(this, t('not_enough_coins'), 0xd84315);
         return;
       }
       data.coins -= seedCost;
@@ -675,7 +675,7 @@ export class GameScene extends Phaser.Scene {
       saveManager.saveImmediate(data);
       this.refreshBoardDisplay();
       this.renderOrders();
-      ModalManager.showToast(this, 'Клетка освобождена! ✨', 0x2e7d32);
+      ModalManager.showToast(this, t('cell_freed'), 0x2e7d32);
     }
   }
 
@@ -698,10 +698,10 @@ export class GameScene extends Phaser.Scene {
     }
     if (this.basketBadgeText) {
       if (data.freeSeedTapsRemaining > 0) {
-        this.basketBadgeText.setText(`Бесплатно: ${data.freeSeedTapsRemaining}`);
+        this.basketBadgeText.setText(t('free_taps', { count: data.freeSeedTapsRemaining }));
         this.basketBadgeText.setBackgroundColor('#2e7d32');
       } else {
-        this.basketBadgeText.setText(`Семечко: 3 ✦`);
+        this.basketBadgeText.setText(t('buy_seed', { cost: 3 }));
         this.basketBadgeText.setBackgroundColor('#f57c00');
       }
     }

@@ -37,7 +37,21 @@ interface YandexFeatures {
   };
 }
 
+interface YandexEnvironment {
+  i18n?: {
+    lang: string;
+    tld?: string;
+  };
+  app?: {
+    id: string;
+  };
+  browser?: {
+    lang: string;
+  };
+}
+
 interface YandexSDK {
+  environment?: YandexEnvironment;
   features?: YandexFeatures;
   adv?: YandexAdv;
   getPlayer(options?: { scopes?: boolean }): Promise<YandexPlayer>;
@@ -66,6 +80,10 @@ export class YandexPlatformAdapter implements IPlatformAdapter {
         this.ysdk = await window.YaGames.init();
         console.log('[YandexPlatformAdapter] YaGames SDK initialized successfully.');
 
+        // Access environment.i18n.lang early on init to fulfill Yandex requirement 2.14
+        const detectedLang = this.getLanguage();
+        console.log('[YandexPlatformAdapter] Detected SDK language at startup:', detectedLang);
+
         try {
           // Guest player initialization without forced auth
           this.player = await this.ysdk.getPlayer({ scopes: false });
@@ -79,6 +97,17 @@ export class YandexPlatformAdapter implements IPlatformAdapter {
     } catch (e) {
       console.error('[YandexPlatformAdapter] SDK init failed:', e);
     }
+  }
+
+  getLanguage(): string {
+    if (this.ysdk?.environment?.i18n?.lang) {
+      const sdkLang = this.ysdk.environment.i18n.lang.toLowerCase();
+      if (sdkLang.startsWith('en')) {
+        return 'en';
+      }
+      return 'ru';
+    }
+    return 'ru';
   }
 
   loadingReady(): void {

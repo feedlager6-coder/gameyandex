@@ -11,6 +11,11 @@ export class BootScene extends Phaser.Scene {
   }
 
   create(): void {
+    const platform = getPlatformAdapter();
+    // Auto-detect and apply SDK language on boot (Requirement 2.14)
+    const detectedLang = (platform.getLanguage() === 'en' ? 'en' : 'ru');
+    setLanguage(detectedLang);
+
     // Generate procedural game textures
     AssetGenerator.generateAll(this);
 
@@ -19,15 +24,17 @@ export class BootScene extends Phaser.Scene {
       SoundSystem.getInstance().unlock();
     });
 
-    const platform = getPlatformAdapter();
     const saveManager = SaveManager.getInstance();
     saveManager.init(platform);
 
     saveManager.load().then((saveData) => {
+      // If save data does not have a language explicitly or is default, use SDK detected language
+      const activeLang = saveData.settings.lang || detectedLang;
+      setLanguage(activeLang);
+
       // Sync sound settings
       SoundSystem.getInstance().setEnabled(saveData.settings.soundEnabled);
       SoundSystem.getInstance().setVibrationEnabled(saveData.settings.vibrationEnabled);
-      setLanguage(saveData.settings.lang);
 
       // Transition to MainMenuScene
       this.scene.start('MainMenuScene');

@@ -237,12 +237,17 @@ export class MainMenuScene extends Phaser.Scene {
     });
     coinText.setOrigin(0, 0.5);
 
-    const maxLvlText = this.add.text(width / 2 + 35, footerY, `★ Ур. ${saveData.unlockedMaxLevel}/8`, {
-      fontFamily: 'system-ui, sans-serif',
-      fontSize: '14px',
-      fontStyle: 'bold',
-      color: '#2e7d32',
-    });
+    const maxLvlText = this.add.text(
+      width / 2 + 35,
+      footerY,
+      `★ ${t('level_abbr')} ${saveData.unlockedMaxLevel}/8`,
+      {
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '14px',
+        fontStyle: 'bold',
+        color: '#2e7d32',
+      }
+    );
     maxLvlText.setOrigin(0, 0.5);
   }
 
@@ -329,7 +334,7 @@ export class MainMenuScene extends Phaser.Scene {
     overlay.setInteractive(new Phaser.Geom.Rectangle(0, 0, width, height), Phaser.Geom.Rectangle.Contains);
 
     const cardW = Math.min(width * 0.88, 360);
-    const cardH = 340;
+    const cardH = 380;
     const cx = width / 2;
     const cy = height / 2;
 
@@ -339,7 +344,7 @@ export class MainMenuScene extends Phaser.Scene {
     cardBg.fillRoundedRect(cx - cardW / 2, cy - cardH / 2, cardW, cardH, 20);
     cardBg.strokeRoundedRect(cx - cardW / 2, cy - cardH / 2, cardW, cardH, 20);
 
-    const header = this.add.text(cx, cy - cardH / 2 + 36, t('settings'), {
+    const header = this.add.text(cx, cy - cardH / 2 + 32, t('settings'), {
       fontFamily: 'system-ui, sans-serif',
       fontSize: '20px',
       fontStyle: 'bold',
@@ -354,10 +359,10 @@ export class MainMenuScene extends Phaser.Scene {
     // Sound toggle
     const soundToggle = this.createCustomButton(
       cx,
-      cy - 45,
-      200,
-      44,
-      `${t('sound')}: ${soundSys.getEnabled() ? 'ВКЛ' : 'ВЫКЛ'}`,
+      cy - 80,
+      210,
+      42,
+      `${t('sound')}: ${soundSys.getEnabled() ? t('on') : t('off')}`,
       soundSys.getEnabled() ? 0xc8e6c9 : 0xffcdd2,
       0x4caf50,
       0x1b5e20,
@@ -374,10 +379,10 @@ export class MainMenuScene extends Phaser.Scene {
     // Vibration toggle
     const vibToggle = this.createCustomButton(
       cx,
-      cy + 15,
-      200,
-      44,
-      `${t('vibration')}: ${soundSys.getVibrationEnabled() ? 'ВКЛ' : 'ВЫКЛ'}`,
+      cy - 26,
+      210,
+      42,
+      `${t('vibration')}: ${soundSys.getVibrationEnabled() ? t('on') : t('off')}`,
       soundSys.getVibrationEnabled() ? 0xc8e6c9 : 0xffcdd2,
       0x4caf50,
       0x1b5e20,
@@ -391,12 +396,33 @@ export class MainMenuScene extends Phaser.Scene {
       }
     );
 
+    // Language toggle
+    const currentLang = data.settings.lang || 'ru';
+    const langToggle = this.createCustomButton(
+      cx,
+      cy + 28,
+      210,
+      42,
+      `${t('language')}: ${currentLang.toUpperCase()}`,
+      0xe8f5e9,
+      0x81c784,
+      0x1b5e20,
+      () => {
+        const nextLang = currentLang === 'ru' ? 'en' : 'ru';
+        data.settings.lang = nextLang;
+        setLanguage(nextLang);
+        saveManager.saveImmediate(data);
+        SoundSystem.getInstance().playClick();
+        this.showSettingsModal(width, height);
+      }
+    );
+
     // Reset Progress Button
     const resetBtn = this.createCustomButton(
       cx,
-      cy + 75,
-      200,
-      40,
+      cy + 82,
+      210,
+      38,
       t('restart'),
       0xffebee,
       0xe57373,
@@ -414,9 +440,9 @@ export class MainMenuScene extends Phaser.Scene {
 
     const closeBtn = this.createCustomButton(
       cx,
-      cy + cardH / 2 - 32,
+      cy + cardH / 2 - 28,
       130,
-      40,
+      36,
       t('close'),
       0x4caf50,
       0x2e7d32,
@@ -427,9 +453,10 @@ export class MainMenuScene extends Phaser.Scene {
           this.modalContainer.destroy();
           this.modalContainer = null;
         }
+        this.scene.restart();
       }
     );
 
-    this.modalContainer.add([overlay, cardBg, header, soundToggle, vibToggle, resetBtn, closeBtn]);
+    this.modalContainer.add([overlay, cardBg, header, soundToggle, vibToggle, langToggle, resetBtn, closeBtn]);
   }
 }

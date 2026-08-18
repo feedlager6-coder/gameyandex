@@ -152,7 +152,7 @@ export class GardenScene extends Phaser.Scene {
       const lvlBadge = this.add.text(
         -cardW / 2 + 135,
         -cardH / 2 + 48,
-        `Уровень: ${plot.level}/${plot.maxLevel} ${'★'.repeat(plot.level)}`,
+        `${t('plot_level', { level: plot.level, max: plot.maxLevel })} ${'★'.repeat(plot.level)}`,
         {
           fontFamily: 'system-ui, sans-serif',
           fontSize: '13px',

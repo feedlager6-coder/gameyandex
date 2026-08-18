@@ -12,6 +12,24 @@ export class MockPlatformAdapter implements IPlatformAdapter {
     console.log('[MockPlatformAdapter] Initialized in local standalone mode.');
   }
 
+  getLanguage(): string {
+    if (typeof window !== 'undefined') {
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const qLang = urlParams.get('lang');
+        if (qLang) {
+          return qLang.toLowerCase().startsWith('en') ? 'en' : 'ru';
+        }
+        if (navigator.language && navigator.language.toLowerCase().startsWith('en')) {
+          return 'en';
+        }
+      } catch (e) {
+        console.warn('[MockPlatformAdapter] getLanguage fallback error:', e);
+      }
+    }
+    return 'ru';
+  }
+
   loadingReady(): void {
     if (!this.isGameReadyReported) {
       this.isGameReadyReported = true;
