@@ -410,7 +410,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   private setupItemDragging(sprite: Phaser.GameObjects.Image, row: number, col: number): void {
-    sprite.on('dragstart', (pointer: Phaser.InputPointer) => {
+    sprite.on('dragstart', (pointer: Phaser.Input.Pointer) => {
       this.draggedSprite = sprite;
       this.dragSourceCell = { row, col };
       sprite.setDepth(50);
@@ -418,12 +418,12 @@ export class GameScene extends Phaser.Scene {
       SoundSystem.getInstance().playClick();
     });
 
-    sprite.on('drag', (pointer: Phaser.InputPointer, dragX: number, dragY: number) => {
+    sprite.on('drag', (pointer: Phaser.Input.Pointer, dragX: number, dragY: number) => {
       sprite.x = dragX;
       sprite.y = dragY;
     });
 
-    sprite.on('dragend', (pointer: Phaser.InputPointer) => {
+    sprite.on('dragend', (pointer: Phaser.Input.Pointer) => {
       sprite.setDepth(1);
       sprite.setScale(1);
 
